@@ -19,9 +19,9 @@ if(sum(as.numeric(!pacotes %in% installed.packages())) != 0){
 # -----------------------------------------------------------------------------
 # Primeiro Método
 
-#* Cálculo Simples
+#* Cálculo de Produtividade - Simples
 #* 
-#* @param peso_medio Peso médio dos grãos (gramas) das espigas selecionadas
+#* @param peso_medio Peso médio dos grãos (g) das espigas selecionadas
 #* @param populacao População de plantas na área por hectare
 #* @serializer unboxedJSON
 #* @get /simples
@@ -32,7 +32,7 @@ function(peso_medio, populacao) {
 
 # Segundo Método
 
-#* Corn Yield Calculation
+#* Corn Yield Calculation - Universidade de Illinois
 #* 
 #* @param req:file Arquivo CSV das amostras coletadas
 #* @post /illinois
@@ -40,5 +40,19 @@ function(req) {
   file <- Rook::Multipart$parse(req)$req$tempfile
   amostras <- read.csv(file)
   amostras$Prod_Espiga <- (amostras$Espigas4m2) * (amostras$FileirasGraos) * (amostras$GraosFileira) * 0.70
-  mean(amostras$Prod_Espiga)
+  list(Produtividade_Estimada = mean(amostras$Prod_Espiga), Unidade_Medida = "kg/ha a 15.5% de umidade")
+}
+
+
+# Terceiro Método
+
+#* Cáculo de Produtividade - Emater
+#* 
+#* @param n_espigas Número de espigas em 10m lineares
+#* @param peso_medio Peso médio de grãos de 3 espigas coletadas (g)
+#* @param entre_linhas Espaçamento entre linhas (m)
+#* @get /emater
+function(n_espigas, peso_medio, entre_linhas) {
+  res <- ((as.numeric(n_espigas) * as.numeric(peso_medio)) / as.numeric(entre_linhas)) / 1000
+  return(list(Produtividade_Estimada = res, Unidade_Medida = "ton/ha a 15.5% de umidade"))
 }
