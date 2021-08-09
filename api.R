@@ -42,7 +42,7 @@ function(peso_medio, populacao) {
 function(req) {
   file <- Rook::Multipart$parse(req)$req$tempfile
   amostras <- read.csv(file)
-  amostras$Prod_Espiga <- (amostras$Espigas4m2) * (amostras$FileirasGraos) * (amostras$GraosFileira) * 0.70
+  amostras$Prod_Espiga <- (amostras[,1]) * (amostras[,2]) * (amostras[,3]) * 0.70
   return(list(Produtividade_Estimada = mean(amostras$Prod_Espiga), Unidade_Medida = "kg/ha a 15.5% de umidade"))
 }
 
